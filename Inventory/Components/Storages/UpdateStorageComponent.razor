@@ -1,0 +1,57 @@
+﻿@using Entities
+@using Business
+
+@inject NavigationManager NavManager
+
+<EditForm Model="oStorage">
+    <DataAnnotationsValidator />
+    <div class="form-group">
+        <label for="categories">Bodega:</label>
+        <InputSelect id="wherehouses" @bind-Value="oStorage.WarehouseId" class="form-control">
+            <option value="">Seleccionar bodega ...</option>
+            @foreach (var wherehouse in warehouses)
+            {
+                <option value="@wherehouse.WarehouseId">@wherehouse.WarehouseName</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <label for="products">Producto:</label>
+        <InputSelect id="products" @bind-Value="oStorage.ProductId" class="form-control">
+            <option value="">Seleccionar producto ...</option>
+            @foreach (var product in products)
+            {
+<option value="@product.ProductId">@product.ProductName</option>}
+        </InputSelect>
+    </div>
+    <div class="form-group">
+        <input type="button" value="Agregar Producto" @onclick="Update" class="form-control btn btn-success" />
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public string IdStorage { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        oStorage = B_Storage.GetStorageById(IdStorage);
+        warehouses = B_Warehouse.WherehouseList();
+        products = B_Product.ProductList();
+    }
+
+    private void Update()
+    {
+        B_Storage.UpdateStorage(oStorage);
+        NavManager.NavigateTo("storage/list");
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
+
+    StorageEntity oStorage = new StorageEntity();
+    List<WarehouseEntity> warehouses = new List<WarehouseEntity>();
+    List<ProductEntity> products = new List<ProductEntity>();
+}
